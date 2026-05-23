@@ -1,0 +1,29 @@
+name: Build and Test .Net Application
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: action/checkout@v3
+
+    - name: Setup .Net
+      uses: action/setup-dotnet@v3
+      with: 
+        dotnet-version: '10.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build Application
+      run: dotnet build --no-restore -c Release
+
+    - name: Build Docker Image
+      run: docker build -t task-tracker:latest .
+    

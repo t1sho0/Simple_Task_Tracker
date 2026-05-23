@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Task Tracker</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 500px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: #f4f4f9;
+      }
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+      .form-group {
+        display: flex;
+        margin-bottom: 20px;
+      }
+      input[type="text"] {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px 0 0 4px;
+        outline: none;
+      }
+      button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #28a745;
+        color: white;
+        cursor: pointer;
+        border-radius: 0 4px 4px 0;
+      }
+      button:hover {
+        background-color: #218838;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+      li {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        background: white;
+        margin-bottom: 8px;
+        border-radius: 4px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+      .task-title {
+        flex: 1;
+        margin-left: 10px;
+        cursor: pointer;
+      }
+      .done {
+        text-decoration: line-through;
+        color: #888;
+      }
+      .btn-delete {
+        background-color: #dc3545;
+        border-radius: 4px;
+        padding: 6px 12px;
+      }
+      .btn-delete:hover {
+        background-color: #c82333;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>📋 Мой Task Tracker</h1>
+
+    <div class="form-group">
+      <input type="text" id="taskInput" placeholder="Что нужно сделать?" />
+      <button onclick="createTask()">Добавить</button>
+    </div>
+
+    <ul id="taskList"></ul>
+
+    <script>
+      const API_URL = "/api/Tasks";
+
+      async function loadTasks() {
+        try {
+          const response = await fetch(API_URL);
+          const tasks = await response.json();
+
+          const taskList = document.getElementById("taskList");
+          taskList.innerHTML = "";
+
+          tasks.forEach((task) => {
+            const li = document.createElement("li");
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = task.isDone;
+            checkbox.onclick = () => toggleStatus(task.id);
+
+            const span = document.createElement("span");
+            span.className = `task-title ${task.isDone ? "done" : ""}`;
+            span.innerText = task.title;
+
+            const deleteBtn = document.createElement("button");
+            deleteBtn.className = "btn-delete";
+            deleteBtn.innerText = "❌";
+            deleteBtn.onclick = () => deleteTask(task.id);
+
+            li.appendChild(checkbox);
+            li.appendChild(span);
+            li.appendChild(deleteBtn);
+            taskList.appendChild(li);
+          });
+        } catch (error) {
+          console.error("Ошибка загрузки:", error);
+        }
+      }
+
+      async function createTask() {
+        const input = document.getElementById("taskInput");
+        if (!input.value.trim()) return;
+
+        try {
+          await fetch(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title: input.value }),
+          });
+          input.value = "";
+          loadTasks();
+        } catch (error) {
+          console.error("Ошибка создания:", error);
+        }
+      }
+
+      async function toggleStatus(id) {
+        try {
+          await fetch(`${API_URL}/${id}`, {
+            method: "PATCH",
+          });
+          loadTasks();
+        } catch (error) {
+          console.error("Ошибка обновления статуса:", error);
+        }
+      }
+
+      async function deleteTask(id) {
+        try {
+          await fetch(`${API_URL}/permanently/${id}`, {
+            method: "DELETE",
+          });
+          loadTasks();
+        } catch (error) {
+          console.error("Ошибка удаления:", error);
+        }
+      }
+
+      loadTasks();
+    </script>
+  </body>
+</html>
