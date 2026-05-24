@@ -2,28 +2,39 @@ name: Build and Test .Net Application
 
 on:
   push:
-    branches: [ "main", "master" ]
-  pull_request:
-    branches: [ "main", "master" ]
+    branches: [main]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+      - name: checkout code
+        uses: actions/checkout@v3
 
-    - name: Setup .Net
-      uses: actions/setup-dotnet@v3
-      with: 
-        dotnet-version: '10.0.x'
+      - name: Setup .Net
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: "10.0.x"
 
-    - name: Restore dependencies
-      run: dotnet restore
+      - name: Restore dependencies
+        run: dotnet restore
 
-    - name: Build Application
-      run: dotnet build --no-restore -c Release
+      - name: Build Application
+        run: dotnet build --no-restore -c Release
 
-    - name: Build Docker Image
-      run: docker build -t task-tracker:latest .
-    
+      - name: Build Docker Image
+        run: docker build -t task-tracker:latest .
+
+      - name: Run Tests
+        run: dotnet test --no-build --verbosity normal
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Trigger Render Deploy
+        run: |
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
