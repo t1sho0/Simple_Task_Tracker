@@ -12,15 +12,15 @@
         max-width: 560px;
         margin: 60px auto;
         padding: 0 20px;
-        background-color: #ffffff;
-        color: #37352f;
+        background-color: #191919;
+        color: #e3e3e3;
       }
 
       h1 {
         font-size: 32px;
         font-weight: 700;
         margin-bottom: 24px;
-        color: #37352f;
+        color: #ffffff;
         display: flex;
         align-items: center;
         gap: 12px;
@@ -34,32 +34,33 @@
 
       input[type="text"] {
         flex: 1;
-        padding: 8px 12px;
-        border: 1px solid rgba(15, 15, 15, 0.15);
+        padding: 10px 14px;
+        border: 1px solid rgba(255, 255, 255, 0.09);
         border-radius: 4px;
         font-size: 15px;
         outline: none;
-        background: rgba(242, 241, 237, 0.4);
+        color: #ffffff;
+        background: rgba(255, 255, 255, 0.05);
         transition:
           background 0.2s ease,
           border-color 0.2s ease;
       }
 
       input[type="text"]:focus {
-        background: #ffffff;
-        border-color: rgba(15, 15, 15, 0.3);
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(35, 131, 226, 0.6);
       }
 
       .btn-add {
         position: absolute;
-        right: 4px;
-        top: 4px;
-        bottom: 4px;
-        padding: 0 12px;
+        right: 6px;
+        top: 6px;
+        bottom: 6px;
+        padding: 0 14px;
         border: none;
         background: #2383e2;
         color: white;
-        font-size: 14px;
+        font-size: 13px;
         font-weight: 500;
         cursor: pointer;
         border-radius: 3px;
@@ -79,15 +80,14 @@
       li {
         display: flex;
         align-items: center;
-        padding: 6px 8px;
+        padding: 8px 10px;
         margin-bottom: 4px;
         border-radius: 4px;
         transition: background-color 0.15s ease;
-        group: hover;
       }
 
       li:hover {
-        background-color: rgba(55, 53, 47, 0.04);
+        background-color: rgba(255, 255, 255, 0.04);
       }
 
       input[type="checkbox"] {
@@ -107,13 +107,13 @@
       .task-title {
         font-size: 15px;
         line-height: 1.5;
-        color: #37352f;
+        color: #e3e3e3;
         word-break: break-word;
       }
 
       .done {
         text-decoration: line-through;
-        color: rgba(55, 53, 47, 0.4);
+        color: rgba(255, 255, 255, 0.3);
       }
 
       .edit-input {
@@ -123,7 +123,8 @@
         border-radius: 3px;
         font-size: 15px;
         outline: none;
-        background: #ffffff;
+        color: #ffffff;
+        background: #202020;
       }
 
       .actions {
@@ -148,7 +149,7 @@
       }
 
       .btn-action:hover {
-        background-color: rgba(55, 53, 47, 0.08);
+        background-color: rgba(255, 255, 255, 0.08);
       }
     </style>
   </head>
@@ -189,11 +190,9 @@
             span.innerText = task.title;
             taskContainer.appendChild(span);
 
-            // Блок кнопок управления
             const actionsDiv = document.createElement("div");
             actionsDiv.className = "actions";
 
-            // Кнопка Изменить
             const editBtn = document.createElement("button");
             editBtn.className = "btn-action";
             editBtn.innerText = "✏️";
@@ -201,7 +200,6 @@
             editBtn.onclick = () =>
               enableEditMode(task.id, task.title, taskContainer, editBtn);
 
-            // Кнопка Удалить
             const deleteBtn = document.createElement("button");
             deleteBtn.className = "btn-action";
             deleteBtn.innerText = "🗑️";
